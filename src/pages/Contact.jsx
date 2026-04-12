@@ -6,7 +6,7 @@ const Contact = () => {
         <div className="contact-page">
             <header className="hero" style={{ height: '50vh' }}>
                 <img
-                    src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&w=1920&q=80"
+                    src="https://picsum.photos/id/1039/1920/1080"
                     alt="Contact Us"
                     className="hero-bg"
                 />

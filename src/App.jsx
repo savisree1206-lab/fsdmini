@@ -6,6 +6,9 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import AdminDashboard from './pages/AdminDashboard';
+import UserDashboard from './pages/UserDashboard';
+import BookingPage from './pages/BookingPage';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -21,6 +24,10 @@ const Navbar = () => {
   }, []);
 
   const isActive = (path) => location.pathname === path;
+
+  // Don't render Navbar on standalone dashboard/booking pages
+  const hideRoutes = ['/user-dashboard', '/admin-dashboard', '/book'];
+  if (hideRoutes.some(path => location.pathname.startsWith(path))) return null;
 
   return (
     <nav className={scrolled ? 'scrolled' : ''}>
@@ -45,19 +52,25 @@ const Navbar = () => {
   );
 };
 
-const Footer = () => (
-  <footer>
-    <div className="container">
-      <div className="logo" style={{ marginBottom: '1rem' }}>VentureVibe</div>
-      <p>&copy; 2026 VentureVibe. Explore the world with style.</p>
-      <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '2rem' }}>
-        <a href="#" className="nav-link">Instagram</a>
-        <a href="#" className="nav-link">Twitter</a>
-        <a href="#" className="nav-link">Facebook</a>
+const Footer = () => {
+  const location = useLocation();
+  const hideRoutes = ['/user-dashboard', '/admin-dashboard', '/book'];
+  if (hideRoutes.some(path => location.pathname.startsWith(path))) return null;
+
+  return (
+    <footer>
+      <div className="container">
+        <div className="logo" style={{ marginBottom: '1rem' }}>VentureVibe</div>
+        <p>&copy; 2026 VentureVibe. Explore the world with style.</p>
+        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '2rem' }}>
+          <a href="#" className="nav-link">Instagram</a>
+          <a href="#" className="nav-link">Twitter</a>
+          <a href="#" className="nav-link">Facebook</a>
+        </div>
       </div>
-    </div>
-  </footer>
-);
+    </footer>
+  );
+};
 
 function App() {
   return (
@@ -71,6 +84,9 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/user-dashboard" element={<UserDashboard />} />
+            <Route path="/book/:id" element={<BookingPage />} />
           </Routes>
         </main>
         <Footer />

@@ -1,48 +1,114 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Plane } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Plane, AlertCircle, CheckCircle } from 'lucide-react';
 
 const Signup = () => {
+    const navigate = useNavigate();
+    const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', role: 'user' });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        setError('');
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        setSuccess('');
+
+        try {
+            const res = await fetch('http://localhost:5000/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(form),
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.error || 'Registration failed. Please try again.');
+            } else {
+                setSuccess(data.message || 'Account created successfully! Redirecting...');
+                setTimeout(() => {
+                    navigate('/login');
+                }, 2000);
+            }
+        } catch {
+            setError('Cannot connect to server. Make sure the backend is running.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="signup-page" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+            <style>
+                {`
+                    .signup-page input::placeholder {
+                        color: rgba(255, 255, 255, 0.7) !important;
+                    }
+                `}
+            </style>
             <img
-                src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80"
+                src="https://picsum.photos/id/1036/1920/1080"
                 alt="Signup background"
                 className="hero-bg"
-                style={{ filter: 'brightness(0.5)' }}
+                style={{ filter: 'brightness(0.5)', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: -1  }}
             />
 
-            <div className="glass-card form-container" style={{ width: '100%', maxWidth: '450px' }}>
-                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                    <Plane size={48} style={{ color: 'var(--accent)', margin: '0 auto 1rem' }} />
-                    <h2 style={{ fontSize: '2rem' }}>Join the Adventure</h2>
-                    <p style={{ color: 'var(--text-muted)' }}>Create your account to start booking.</p>
+            <div className="glass-card form-container" style={{ width: '100%', maxWidth: '450px', background: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', padding: '2rem', borderRadius: '1rem', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
+                <div style={{ textAlign: 'center', marginBottom: '1.5rem', color: 'white' }}>
+                    <Plane size={48} style={{ color: '#fff', margin: '0 auto 1rem' }} />
+                    <h2 style={{ fontSize: '2rem', margin: 0 }}>Join the Adventure</h2>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: '0.5rem 0' }}>Create your account to start booking.</p>
                 </div>
 
-                <form>
-                    <div className="input-group">
-                        <label>Full Name</label>
-                        <input type="text" placeholder="Enter your full name" required />
+                {error && (
+                    <div style={{ background: 'rgba(255,0,0,0.1)', color: '#ff6b6b', padding: '0.75rem', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', border: '1px solid rgba(255,0,0,0.2)' }}>
+                        <AlertCircle size={16} /> {error}
                     </div>
-                    <div className="input-group">
-                        <label>Email Address</label>
-                        <input type="email" placeholder="Enter your email" required />
+                )}
+                {success && (
+                    <div style={{ background: 'rgba(0,255,0,0.1)', color: '#51cf66', padding: '0.75rem', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', border: '1px solid rgba(0,255,0,0.2)' }}>
+                        <CheckCircle size={16} /> {success}
                     </div>
-                    <div className="input-group">
-                        <label>Phone Number</label>
-                        <input type="tel" placeholder="Enter your phone number" required />
+                )}
+
+                <form onSubmit={handleSubmit}>
+                    <div className="input-group" style={{ marginBottom: '1rem' }}>
+                        <label style={{ display: 'block', color: 'white', marginBottom: '0.5rem' }}>Account Type</label>
+                        <select name="role" value={form.role} onChange={handleChange} required style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }}>
+                            <option value="user" style={{ color: '#000' }}>Traveler (Standard User)</option>
+                            <option value="guide" style={{ color: '#000' }}>Travel Guide</option>
+                            <option value="admin" style={{ color: '#000' }}>System Administrator</option>
+                        </select>
                     </div>
-                    <div className="input-group">
-                        <label>Password</label>
-                        <input type="password" placeholder="Create a password" required />
+                    <div className="input-group" style={{ marginBottom: '1rem' }}>
+                        <label style={{ display: 'block', color: 'white', marginBottom: '0.5rem' }}>Full Name</label>
+                        <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Enter your full name" required style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} />
                     </div>
-                    <button className="btn-primary" style={{ width: '100%', padding: '1rem', marginBottom: '1.5rem' }}>
-                        Create Account
+                    <div className="input-group" style={{ marginBottom: '1rem' }}>
+                        <label style={{ display: 'block', color: 'white', marginBottom: '0.5rem' }}>Email Address</label>
+                        <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Enter your email" required style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} />
+                    </div>
+                    <div className="input-group" style={{ marginBottom: '1rem' }}>
+                        <label style={{ display: 'block', color: 'white', marginBottom: '0.5rem' }}>Phone Number</label>
+                        <input type="tel" name="phone" value={form.phone} onChange={handleChange} placeholder="Enter your phone number" required style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} />
+                    </div>
+                    <div className="input-group" style={{ marginBottom: '1.5rem' }}>
+                        <label style={{ display: 'block', color: 'white', marginBottom: '0.5rem' }}>Password</label>
+                        <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Create a password" required style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} />
+                    </div>
+                    <button type="submit" disabled={loading} style={{ width: '100%', boxSizing: 'border-box', padding: '1rem', marginBottom: '1.5rem', background: '#fff', color: '#000', border: 'none', borderRadius: '0.5rem', fontWeight: 'bold', cursor: 'pointer' }}>
+                        {loading ? 'Creating Account...' : 'Create Account'}
                     </button>
                 </form>
 
-                <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-                    Already have an account? <Link to="/login" style={{ color: 'var(--accent)', fontWeight: '600' }}>Login</Link>
+                <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.8)' }}>
+                    Already have an account? <Link to="/login" style={{ color: '#fff', fontWeight: '600', textDecoration: 'none' }}>Login</Link>
                 </p>
             </div>
         </div>

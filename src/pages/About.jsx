@@ -1,12 +1,14 @@
 import React from 'react';
 import { Shield, Globe, Clock, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const About = () => {
+    const navigate = useNavigate();
     return (
         <div className="about-page">
             <header className="hero" style={{ height: '50vh' }}>
                 <img
-                    src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1920&q=80"
+                    src="https://picsum.photos/id/1018/1920/1080"
                     alt="About Us"
                     className="hero-bg"
                 />
@@ -27,11 +29,11 @@ const About = () => {
                             <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.8' }}>
                                 Our team of travel enthusiasts works tirelessly to curate the best destinations and ensure your journey is smooth from start to finish.
                             </p>
-                            <button className="btn-primary">Learn Our Process</button>
+                            <button className="btn-primary" onClick={() => navigate('/signup')}>Sign Up and Explore More</button>
                         </div>
                         <div className="glass-card" style={{ padding: '2rem', overflow: 'hidden' }}>
                             <img
-                                src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=800&q=80"
+                                src="https://picsum.photos/id/1011/800/600"
                                 alt="Travel team"
                                 style={{ width: '100%', borderRadius: '1rem' }}
                             />

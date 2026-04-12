@@ -1,47 +1,49 @@
 import React from 'react';
 import { MapPin, Star, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const spots = [
     {
         id: 1,
         name: 'Bali, Indonesia',
         desc: 'Tropical paradise with lush jungles and pristine beaches.',
-        price: '$1,200',
-        img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80',
+        price: '₹95,000',
+        img: 'https://picsum.photos/id/1015/800/600',
         rating: 4.9
     },
     {
         id: 2,
         name: 'Santorini, Greece',
         desc: 'Breathtaking white buildings overlooking the Aegean Sea.',
-        price: '$2,500',
-        img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80',
+        price: '₹2,05,000',
+        img: 'https://picsum.photos/id/1047/800/600',
         rating: 4.8
     },
     {
         id: 3,
         name: 'Swiss Alps, Switzerland',
         desc: 'Snow-capped peaks and cozy mountain retreats.',
-        price: '$2,100',
-        img: 'https://images.unsplash.com/photo-1531310197839-ccf54634509e?auto=format&fit=crop&w=800&q=80',
+        price: '₹1,75,000',
+        img: 'https://picsum.photos/id/1036/800/600',
         rating: 5.0
     },
     {
         id: 4,
         name: 'Kyoto, Japan',
         desc: 'Ancient temples and stunning cherry blossom gardens.',
-        price: '$1,800',
-        img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80',
+        price: '₹1,45,000',
+        img: 'https://picsum.photos/id/1043/800/600',
         rating: 4.7
     }
 ];
 
 const Home = () => {
+    const navigate = useNavigate();
     return (
         <div className="home-page">
             <header className="hero">
                 <img
-                    src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1920&q=80"
+                    src="https://picsum.photos/id/1040/1920/1080"
                     alt="Travel Hero"
                     className="hero-bg"
                 />
@@ -49,8 +51,8 @@ const Home = () => {
                     <h1>Explore The Unexplored</h1>
                     <p>Discover hidden gems and create unforgettable memories with our curated travel experiences.</p>
                     <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center' }}>
-                        <button className="btn-primary">Book Your Trip</button>
-                        <button className="btn-outline">Learn More</button>
+                        <button className="btn-primary" onClick={() => navigate('/signup')}>Book Your Trip</button>
+                        <button className="btn-outline" onClick={() => navigate('/about')}>Learn More</button>
                     </div>
                 </div>
             </header>
@@ -77,7 +79,7 @@ const Home = () => {
                                     <p style={{ marginBottom: '1.5rem' }}>{spot.desc}</p>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <span style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--accent)' }}>{spot.price}</span>
-                                        <button className="btn-primary" style={{ padding: '0.5rem 1.2rem', fontSize: '0.8rem' }}>
+                                        <button className="btn-primary" style={{ padding: '0.5rem 1.2rem', fontSize: '0.8rem' }} onClick={() => navigate('/signup')}>
                                             Book Now <ArrowRight size={14} className="inline-block ml-1" />
                                         </button>
                                     </div>
@@ -94,7 +96,7 @@ const Home = () => {
                     <p style={{ maxWidth: '600px', margin: '0 auto 3rem', color: 'var(--text-muted)' }}>
                         Join thousands of travelers who have found their dream destinations with VentureVibe.
                     </p>
-                    <button className="btn-primary" style={{ padding: '1.2rem 3rem', fontSize: '1.1rem' }}>Get Started Today</button>
+                    <button className="btn-primary" style={{ padding: '1.2rem 3rem', fontSize: '1.1rem' }} onClick={() => navigate('/signup')}>Get Started Today</button>
                 </div>
             </section>
         </div>
