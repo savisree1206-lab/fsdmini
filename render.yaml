@@ -16,7 +16,7 @@ services:
         value: 5000
 
   # Frontend Static Site
-  - type: static
+  - type: web
     name: fsdmini-frontend
     env: static
     plan: free
