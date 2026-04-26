@@ -110,6 +110,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 
 // ─── Health Check ────────────────────────────────────────────────────────────
+app.get('/', (req, res) => res.send('API is running...'));
 app.get('/api/health', (req, res) => res.json({ status: 'OK', db: mongoose.connection.readyState }));
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
