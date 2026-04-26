@@ -26,7 +26,6 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true },
     phone: { type: String },
     password: { type: String, required: true },
-    role: { type: String, enum: ['user', 'admin', 'guide'], default: 'user' },
   },
   { timestamps: true }
 );
@@ -56,11 +55,7 @@ const protect = (req, res, next) => {
   }
 };
 
-const adminOnly = (req, res, next) => {
-  if (req.user?.role !== 'admin')
-    return res.status(403).json({ error: 'Admin access only' });
-  next();
-};
+
 
 // ══════════════════════════════════════════════════════════════════════════════
 //  USER ROUTES
@@ -69,21 +64,20 @@ const adminOnly = (req, res, next) => {
 // POST /api/auth/register
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { name, email, phone, password, role } = req.body;
+    const { name, email, phone, password } = req.body;
     if (!name || !email || !password)
       return res.status(400).json({ error: 'Name, email, and password are required' });
 
     const exists = await User.findOne({ email });
     if (exists) return res.status(409).json({ error: 'Email already registered' });
 
-    const assignedRole = ['user', 'admin', 'guide'].includes(role) ? role : 'user';
-    const user = await User.create({ name, email, phone, password, role: assignedRole });
-    const token = generateToken({ id: user._id, role: user.role });
+    const user = await User.create({ name, email, phone, password });
+    const token = generateToken({ id: user._id });
 
     res.status(201).json({
       message: 'User registered successfully',
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: { id: user._id, name: user.name, email: user.email },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -93,76 +87,27 @@ app.post('/api/auth/register', async (req, res) => {
 // POST /api/auth/login  (User login)
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
     if (!email || !password)
       return res.status(400).json({ error: 'Email and password are required' });
 
-    const user = await User.findOne({ email, role: role || 'user' });
+    const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ error: 'Invalid email or password' });
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: 'Invalid email or password' });
 
-    const token = generateToken({ id: user._id, role: user.role });
+    const token = generateToken({ id: user._id });
     res.json({
       message: 'Login successful',
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: { id: user._id, name: user.name, email: user.email },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ══════════════════════════════════════════════════════════════════════════════
-//  ADMIN ROUTES
-// ══════════════════════════════════════════════════════════════════════════════
-
-// POST /api/admin/login  (Admin login — checks hardcoded env credentials)
-app.post('/api/admin/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password)
-      return res.status(400).json({ error: 'Email and password are required' });
-
-    if (
-      email !== process.env.ADMIN_EMAIL ||
-      password !== process.env.ADMIN_PASSWORD
-    ) {
-      return res.status(401).json({ error: 'Invalid admin credentials' });
-    }
-
-    const token = generateToken({ id: 'admin', role: 'admin', email });
-    res.json({
-      message: 'Admin login successful',
-      token,
-      user: { id: 'admin', name: 'Administrator', email, role: 'admin' },
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// GET /api/admin/users  (Admin: view all users)
-app.get('/api/admin/users', protect, adminOnly, async (req, res) => {
-  try {
-    const users = await User.find({ role: 'user' }).select('-password');
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// DELETE /api/admin/users/:id  (Admin: delete a user)
-app.delete('/api/admin/users/:id', protect, adminOnly, async (req, res) => {
-  try {
-    const deleted = await User.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: 'User not found' });
-    res.json({ message: 'User deleted', user: deleted });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 // ─── Health Check ────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => res.json({ status: 'OK', db: mongoose.connection.readyState }));

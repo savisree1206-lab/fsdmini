@@ -4,7 +4,7 @@ import { Plane, AlertCircle, CheckCircle } from 'lucide-react';
 
 const Signup = () => {
     const navigate = useNavigate();
-    const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', role: 'user' });
+    const [form, setForm] = useState({ name: '', email: '', phone: '', password: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -78,14 +78,6 @@ const Signup = () => {
                 )}
 
                 <form onSubmit={handleSubmit}>
-                    <div className="input-group" style={{ marginBottom: '1rem' }}>
-                        <label style={{ display: 'block', color: 'white', marginBottom: '0.5rem' }}>Account Type</label>
-                        <select name="role" value={form.role} onChange={handleChange} required style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }}>
-                            <option value="user" style={{ color: '#000' }}>Traveler (Standard User)</option>
-                            <option value="guide" style={{ color: '#000' }}>Travel Guide</option>
-                            <option value="admin" style={{ color: '#000' }}>System Administrator</option>
-                        </select>
-                    </div>
                     <div className="input-group" style={{ marginBottom: '1rem' }}>
                         <label style={{ display: 'block', color: 'white', marginBottom: '0.5rem' }}>Full Name</label>
                         <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Enter your full name" required style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} />

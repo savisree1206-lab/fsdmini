@@ -6,9 +6,9 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import AdminDashboard from './pages/AdminDashboard';
 import UserDashboard from './pages/UserDashboard';
 import BookingPage from './pages/BookingPage';
+import HotelBookingPage from './pages/HotelBookingPage';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -26,7 +26,7 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   // Don't render Navbar on standalone dashboard/booking pages
-  const hideRoutes = ['/user-dashboard', '/admin-dashboard', '/book'];
+  const hideRoutes = ['/user-dashboard', '/book', '/book-hotel'];
   if (hideRoutes.some(path => location.pathname.startsWith(path))) return null;
 
   return (
@@ -54,7 +54,7 @@ const Navbar = () => {
 
 const Footer = () => {
   const location = useLocation();
-  const hideRoutes = ['/user-dashboard', '/admin-dashboard', '/book'];
+  const hideRoutes = ['/user-dashboard', '/book'];
   if (hideRoutes.some(path => location.pathname.startsWith(path))) return null;
 
   return (
@@ -84,9 +84,9 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/user-dashboard" element={<UserDashboard />} />
             <Route path="/book/:id" element={<BookingPage />} />
+            <Route path="/book-hotel" element={<HotelBookingPage />} />
           </Routes>
         </main>
         <Footer />

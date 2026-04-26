@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MOCK_DESTINATIONS } from './UserDashboard';
-import { ArrowLeft, Star, MapPin, Calendar, Users, CreditCard, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Calendar, CreditCard, ShieldCheck, Download, Ticket } from 'lucide-react';
+import { generateETicket } from '../utils/generateTicket';
+import { addNotification } from '../utils/notificationUtils';
 import './BookingPage.css';
 
 const BookingPage = () => {
@@ -15,6 +17,7 @@ const BookingPage = () => {
     const [vehicle, setVehicle] = useState('flight');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [confirmedBooking, setConfirmedBooking] = useState(null);
 
     useEffect(() => {
         const dest = MOCK_DESTINATIONS.find(d => d.id === parseInt(id));
@@ -62,23 +65,65 @@ const BookingPage = () => {
             };
             existingBookings.push(newBooking);
             localStorage.setItem('bookings', JSON.stringify(existingBookings));
+            setConfirmedBooking(newBooking);
+            addNotification('success', 'Booking Confirmed!', `Your trip to ${newBooking.name} (${newBooking.checkIn} → ${newBooking.checkOut}) is confirmed. Booking ID: #${newBooking.bookingId}`);
 
             setTimeout(() => {
                 navigate('/user-dashboard'); 
-            }, 3000);
+            }, 12000);
         }, 1500);
     };
 
-    if (success) {
+    const handleDownloadTicket = () => {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        generateETicket(confirmedBooking, user);
+    };
+
+    if (success && confirmedBooking) {
         return (
             <div className="booking-success-page">
                 <div className="success-card glass-card">
                     <div className="success-icon-wrapper">
                         <ShieldCheck size={48} className="success-icon" />
                     </div>
-                    <h2>Booking Confirmed!</h2>
-                    <p>Your trip to <strong>{destination.name}</strong> is all set.</p>
-                    <p className="redirect-note">Redirecting to your dashboard...</p>
+                    <h2>🎉 Booking Confirmed!</h2>
+                    <p>Your trip to <strong>{confirmedBooking.name}</strong> is all set.</p>
+
+                    {/* Booking Summary */}
+                    <div className="ticket-summary">
+                        <div className="ticket-row">
+                            <span>Booking ID</span>
+                            <strong>#{confirmedBooking.bookingId}</strong>
+                        </div>
+                        <div className="ticket-row">
+                            <span>Check-in</span>
+                            <strong>{confirmedBooking.checkIn}</strong>
+                        </div>
+                        <div className="ticket-row">
+                            <span>Check-out</span>
+                            <strong>{confirmedBooking.checkOut}</strong>
+                        </div>
+                        <div className="ticket-row">
+                            <span>Guests</span>
+                            <strong>{confirmedBooking.guests}</strong>
+                        </div>
+                        <div className="ticket-row">
+                            <span>Transport</span>
+                            <strong style={{ textTransform: 'capitalize' }}>{confirmedBooking.vehicle}</strong>
+                        </div>
+                        <div className="ticket-row ticket-total">
+                            <span>Total Paid</span>
+                            <strong>₹{confirmedBooking.total.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</strong>
+                        </div>
+                    </div>
+
+                    {/* Download Button */}
+                    <button className="download-ticket-btn" onClick={handleDownloadTicket}>
+                        <Download size={18} />
+                        Download E-Ticket (PDF)
+                    </button>
+
+                    <p className="redirect-note">Redirecting to dashboard in a few seconds...</p>
                 </div>
             </div>
         );
