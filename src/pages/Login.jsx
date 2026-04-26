@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import API_URL from '../apiConfig';
 import { Plane, User, Shield, Eye, EyeOff, AlertCircle, CheckCircle, MapPin } from 'lucide-react';
 import './Login.css';
 
@@ -22,7 +23,7 @@ const Login = () => {
     setError('');
     setSuccess('');
 
-    const endpoint = 'http://localhost:5000/api/auth/login';
+    const endpoint = `${API_URL}/api/auth/login`;
 
     try {
       const res = await fetch(endpoint, {

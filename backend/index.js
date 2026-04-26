@@ -16,7 +16,7 @@ app.use(express.json());
 // ─── MongoDB Atlas Connection ────────────────────────────────────────────────
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ Connected to MongoDB (Local)'))
+  .then(() => console.log('✅ Connected to MongoDB'))
   .catch((err) => console.error('❌ MongoDB connection error:', err));
 
 // ─── User Schema & Model ─────────────────────────────────────────────────────
