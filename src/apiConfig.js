@@ -1,3 +1,3 @@
-const API_URL = import.meta.env.VITE_API_URL || 'https://fsdmini-backend.onrender.com';
+const API_URL = 'https://fsdmini-backend.onrender.com';
 
 export default API_URL;
